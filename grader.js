@@ -26,6 +26,10 @@ var program = require('commander');
 var cheerio = require('cheerio');
 var HTMLFILE_DEFAULT = "index.html";
 var CHECKSFILE_DEFAULT = "checks.json";
+var URL_DEFAULT = "http://peaceful-eyrie-2482.herokuapp.com/"
+
+var rest = require('restler');
+var request = require('request')
 
 var assertFileExists = function(infile) {
     var instr = infile.toString();
@@ -61,14 +65,47 @@ var clone = function(fn) {
     return fn.bind({});
 };
 
+var downloadFile = function(url, callback){
+  console.log('going to go to url = ' + url)
+  // rest.get(url).on('complete', function(result){
+    request(url.toString(), function(result) {
+
+    // console.log(result)      
+
+    fs.writeFile('fromServer.html', result, function(err){
+      if(!err){
+        console.log('no error saving file')
+        return callback(null,'fromServer.html' )
+      }else {
+        console.log('error saving server file')
+        return callback(err, null)
+      }
+
+    })
+
+
+    // return result;
+  });
+}
+
 if(require.main == module) {
     program
         .option('-c, --checks <check_file>', 'Path to checks.json', clone(assertFileExists), CHECKSFILE_DEFAULT)
         .option('-f, --file <html_file>', 'Path to index.html', clone(assertFileExists), HTMLFILE_DEFAULT)
+        .option('-u, --url <url>', '<u></u>rl', clone(assertFileExists), URL_DEFAULT)
         .parse(process.argv);
+    // console.log(program)
+    downloadFile(program.url, function(err,result){
+      console.log(result)
+      console.log(program.file)
     var checkJson = checkHtmlFile(program.file, program.checks);
     var outJson = JSON.stringify(checkJson, null, 4);
     console.log(outJson);
+
+    })
+    // console.log(out)
+    // console.log(program.file)
+
 } else {
     exports.checkHtmlFile = checkHtmlFile;
 }
