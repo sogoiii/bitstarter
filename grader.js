@@ -67,6 +67,7 @@ var clone = function(fn) {
 
 var downloadFile = function(url, callback){
   console.log('going to go to url = ' + url)
+  console.log('_____________________')
   // rest.get(url).on('complete', function(result){
     request(url.toString(), function(result) {
 
@@ -92,7 +93,7 @@ if(require.main == module) {
     program
         .option('-c, --checks <check_file>', 'Path to checks.json', clone(assertFileExists), CHECKSFILE_DEFAULT)
         .option('-f, --file <html_file>', 'Path to index.html', clone(assertFileExists), HTMLFILE_DEFAULT)
-        .option('-u, --url <url>', '<u></u>rl', clone(assertFileExists), URL_DEFAULT)
+        .option('-u, --url <url>', 'url', URL_DEFAULT)
         .parse(process.argv);
     // console.log(program)
     downloadFile(program.url, function(err,result){
